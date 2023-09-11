@@ -5,15 +5,15 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "npx eslint *.ts"
+    "lint": "npx eslint *.ts",
+    "compile": "npx tsc",
+    "clean": "rm *.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "tsc": "^2.0.4"
-  },
   "devDependencies": {
+    "@types/node": "^20.6.0",
     "@typescript-eslint/eslint-plugin": "^6.6.0",
     "eslint": "^8.49.0",
     "eslint-config-standard-with-typescript": "^39.0.0",
