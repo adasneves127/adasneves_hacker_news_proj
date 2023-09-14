@@ -27,7 +27,13 @@ Once NodeJS is installed, please run
 ### COMPILING
 This project is written in Typescript, which NodeJS cannot run natively.
 
-To compile this, please run:
+To compile this into JavaScript, please run:
 ```bash
 npm run compile
 ```
+
+---
+
+### EXECUTING
+
+To execute this program, type ```node index.js```. The program will start gathering data from the Agnolia API provided, and save its results to 'output.txt'

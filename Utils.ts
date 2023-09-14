@@ -5,7 +5,7 @@ export interface entry {
     num_comments: number
 }
 
-export interface Response {
+export interface WebResponse {
     hits: Array<entry>,
     nbHits: number,
     page: number,
@@ -23,6 +23,7 @@ export interface Response {
         fetch: { query: number, scanning: number, total: number },
         total: number
     },
-    serverTimeMS: number
+    serverTimeMS: number,
+    key: any
 
 }

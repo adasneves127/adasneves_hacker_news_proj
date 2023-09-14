@@ -5,7 +5,7 @@
   "main": "main.js",
   "type": "commonjs",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npx tsc; node tests.js",
     "lint": "npx eslint *.ts",
     "compile": "npx tsc",
     "clean": "rm *.js",
