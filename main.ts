@@ -63,18 +63,25 @@ export function isWithinYear(article: entry){
 }
 
 /**
- *
- * @param article
+ * Checks if the article is beginning with the correct text.
+ * @param article A result from the Hacker News website
+ * @returns boolean Returns true if the article begins with the correct text
  */
 export function isCorrectArticleType(article: entry){
     if(typeof article.title !== "string") return false
     return article.title.startsWith("Ask HN: Who is hiring?")
 }
 
+/**
+ * Checks if the article fits the correct criteria
+ * @param current_page A list of results from Hacker News (Agnolia) API
+ * @returns void
+ */
 function getKeyData(current_page: WebResponse){
     current_page.hits.forEach(article => {
-        if(typeof article.title === "string" && isCorrectArticleType(article) && isWithinYear(article))
+        if(typeof article.title === "string" && isCorrectArticleType(article) && isWithinYear(article)) {
             articles.push(article)
+        }
     })
 }
 
@@ -92,12 +99,16 @@ function writeToFile(){
     })
 }
 
-export function main (){
+export async function main (){
     outputFile.write("Date, Top-Level-Comments\n")
 
-    //
-    fetch_all_pages()
+    // Wait for pages to be gathered
+    await fetch_all_pages()
+
+    // Write the article data to the file
     writeToFile()
+
+    // Close the file
     outputFile.close()
 }
 
