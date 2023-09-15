@@ -17,25 +17,25 @@ test("Ensure web data is not corrupted", async () => {
 
 test("Date comparison is correct",
     () => {
-    // Current date and time
-    const testEntry_now: entry = {
-        title: 'This is a fake article!',
-        created_at: `${new Date()}`,
-        num_comments: -1
-    }
+        // Current date and time
+        const testEntry_now: entry = {
+            title: 'This is a fake article!',
+            created_at: `${new Date()}`,
+            num_comments: -1
+        }
 
-    // 1 hour before
-    const testEntryHourBefore: entry = {
-        title: 'This is a fake article as well!',
-        created_at: `${new Date(Date.now() - 3600000)}`,
-        num_comments: -1
-    }
-    // Over 1-year-old
-    const testEntryLastYear: entry = {
-        title: 'This is a fake article as well!',
-        created_at: `${new Date(Date.now() - (36000000000))}`,
-        num_comments: -1
-    }
+        // 1 hour before
+        const testEntryHourBefore: entry = {
+            title: 'This is a fake article as well!',
+            created_at: `${new Date(Date.now() - 3600000)}`,
+            num_comments: -1
+        }
+        // Over 1-year-old
+        const testEntryLastYear: entry = {
+            title: 'This is a fake article as well!',
+            created_at: `${new Date(Date.now() - (36000000000))}`,
+            num_comments: -1
+        }
         // Make sure all 3 are correctly detected
         assert.strictEqual(isWithinYear(testEntry_now), true)
         assert.strictEqual(isWithinYear(testEntryHourBefore), true)

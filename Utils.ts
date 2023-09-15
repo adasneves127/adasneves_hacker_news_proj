@@ -23,7 +23,6 @@ export interface WebResponse {
         fetch: { query: number, scanning: number, total: number },
         total: number
     },
-    serverTimeMS: number,
-    key: any
+    serverTimeMS: number
 
 }
