@@ -13,6 +13,7 @@ const articles: Array<entry> = [] // List of valid articles
  */
 async function fetch_all_pages(){
     // Keep track of the total pages of data, and the page we are on.
+    // add comment to test workflow
     let total_pages = 0;
     let page_count = 0
 
