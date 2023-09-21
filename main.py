@@ -58,7 +58,9 @@ def main():
     
     with open("output.txt", 'w') as f:
         f.write("Title, Comments\n")
-        f.writelines([','.join([x.title, x.num_comments]) for x in past_hire])
+        f.writelines([f"""{
+            ','.join([x['title'], str(x['num_comments'])])
+            }\n""" for x in past_hire])
     
     
 
