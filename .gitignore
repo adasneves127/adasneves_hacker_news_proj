@@ -3,3 +3,4 @@ venv
 output.txt
 *.pyc
 .prettierrc
+test.*
