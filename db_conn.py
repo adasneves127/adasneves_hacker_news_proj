@@ -65,7 +65,7 @@ class db_conn:
 
         self.cursor.execute(query, list(filtered_dict.values()))
         self.db.commit()
-        
+
     def close(self):
         self.db.commit()
         self.db.close()

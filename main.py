@@ -14,18 +14,16 @@ def get_comment_dict(comment: dict):
     split_text = comment_text.split("|")
     # We always know that the company name is the first element
     return_dict["company"] = split_text[0]
-    
+
     # We need to look at the next element to see if it's a location or position
-    
-    
+
     return return_dict
-    
-    
+
+
 def get_article_by_id(article_id: int):
-    article = web_utils.get_data(
-        f"http://hn.algolia.com/api/v1/items/{article_id}"
-    )
+    article = web_utils.get_data(f"http://hn.algolia.com/api/v1/items/{article_id}")
     return article
+
 
 def get_all_pages():
     page_num = 0
@@ -94,7 +92,7 @@ def project_2_main():
         for comment in article_data.get("children"):
             comment_data = get_comment_dict(comment)
             db.insert("comments", comment_data)
-            
+
     db.close()
 
 
