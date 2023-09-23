@@ -21,7 +21,9 @@ def get_comment_dict(comment: dict):
 
 
 def get_article_by_id(article_id: int):
-    article = web_utils.get_data(f"http://hn.algolia.com/api/v1/items/{article_id}")
+    article = web_utils.get_data(
+        f"http://hn.algolia.com/api/v1/items/{article_id}"
+        )
     return article
 
 

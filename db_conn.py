@@ -32,7 +32,7 @@ class db_conn:
         try:
             self.cursor.execute(query)
             self.db.commit()
-        except sqlite3.IntegrityError as e:
+        except sqlite3.IntegrityError:
             pass
         except Exception as e:
             print(f"SQL Syntax Error! {e}\n{query}")
