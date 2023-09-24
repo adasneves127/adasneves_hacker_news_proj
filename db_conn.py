@@ -9,7 +9,7 @@ article_dict = {
     "author": "text",
     "points": "Integer",
     "num_comments": "Integer",
-    "created_at_i": "Integer",
+    "created_at_i": "Integer"
 }
 
 comment_dict = {
@@ -18,7 +18,8 @@ comment_dict = {
     "company": "text",
     "location": "text",
     "salary": "text",
-    "foreign key(parent_id)": "references articles(objectID)",
+    "raw_comment": "blob",
+    "foreign key(parent_id)": "references articles(objectID)"
 }
 
 
@@ -42,7 +43,7 @@ class db_conn:
             self.cursor.execute(query, params)
             self.db.commit()
         except sqlite3.IntegrityError:
-            pass # The data is already in the database.
+            pass  # The data is already in the database.
         except Exception as e:
             print(f"SQL Syntax Error! {e}\n{query} {params}")
 
