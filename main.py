@@ -2,6 +2,7 @@ import web_utils
 from urllib import parse
 from datetime import datetime
 import db_conn
+import spacy
 
 
 def get_comment_dict(comment: dict):
@@ -15,7 +16,8 @@ def get_comment_dict(comment: dict):
     # We always know that the company name is the first element
     return_dict["company"] = split_text[0]
 
-    # We need to look at the next element to see if it's a location or position
+    # Look at the next element to see if it's a location or position using spacy
+    
 
     return return_dict
 

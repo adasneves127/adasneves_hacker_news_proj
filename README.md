@@ -14,7 +14,7 @@ To install this project, create and source a new venv using the commands `python
 
 `source ./venv/bin/activate`
 
-#### Windows
+#### Windows Powershell
 
 `./venv/bin/Activate.ps1`
 
@@ -30,6 +30,10 @@ To install this project, create and source a new venv using the commands `python
 
 To install required packages, use python's PIP command as follows:
 `pip3.10 install -r requirements.txt`
+
+### Installing Spacy
+
+To install the Language Model used for Spacy, run `python -m spacy download en_core_web_sm`
 
 ---
 
