@@ -7,17 +7,24 @@ import spacy
 
 def get_comment_dict(comment: dict):
     return_dict = {}
-    company_name = comment["text"].split(";")
-    print(company_name)
+    comment_text = comment.get("text", "")
+    split_text = comment_text.split("|")
+
+    return_dict["company"] = split_text[0]
     return_dict["id"] = comment["id"]
     return_dict["parent_id"] = comment["parent_id"]
-    comment_text = comment["text"]
-    split_text = comment_text.split("|")
     # We always know that the company name is the first element
     return_dict["company"] = split_text[0]
 
-    # Look at the next element to see if it's a location or position using spacy
-    
+    # Look at the next element to see if it's a location or
+    #                                  position using spacy
+    nlp = spacy.load("en_core_web_trf")
+
+    doc = nlp(comment_text)
+
+    for entity in doc.ents:
+        if entity.label_ == "GPE":
+            print(entity.text)
 
     return return_dict
 
@@ -90,7 +97,6 @@ def project_2_main():
     db.create_table("comments", db_conn.comment_dict)
     for article in past_hire:
         db.insert("articles", article)
-        print(article.get("title"))
         article_id = article.get("objectID")
         article_data = get_article_by_id(article_id)
         for comment in article_data.get("children"):

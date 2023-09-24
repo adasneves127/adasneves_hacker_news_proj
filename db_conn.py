@@ -41,6 +41,8 @@ class db_conn:
         try:
             self.cursor.execute(query, params)
             self.db.commit()
+        except sqlite3.IntegrityError:
+            pass # The data is already in the database.
         except Exception as e:
             print(f"SQL Syntax Error! {e}\n{query} {params}")
 
@@ -62,9 +64,7 @@ class db_conn:
 
         query = f"""INSERT INTO {table_name} ({','.join(filtered_dict.keys())})
             VALUES ({','.join(['?' for x in filtered_dict.keys()])});"""
-
-        self.cursor.execute(query, list(filtered_dict.values()))
-        self.db.commit()
+        self.execute_with_params(query, list(filtered_dict.values()))
 
     def close(self):
         self.db.commit()
