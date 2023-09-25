@@ -10,7 +10,7 @@
 
 To install this project, create and source a new venv using the commands `python3.10 -m venv venv` followed by:
 
-#### Ubuntu
+#### BASH/ZSH
 
 `source ./venv/bin/activate`
 

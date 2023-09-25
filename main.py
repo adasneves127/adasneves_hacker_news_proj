@@ -66,6 +66,8 @@ def init_db():
     print("Creating tables")
     db.create_table("articles", db_conn.article_dict)
     db.create_table("comments", db_conn.comment_dict)
+    
+    return db
 
 
 def save_articles(db: db_conn.db_conn, articles):
