@@ -4,3 +4,5 @@ output.txt
 *.pyc
 .prettierrc
 test.*
+.pytest_cache
+__pycache__

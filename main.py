@@ -2,40 +2,7 @@ import web_utils
 from urllib import parse
 from datetime import datetime
 import db_conn
-import spacy
-
-
-def get_comment_dict(comment: dict):
-    return_dict = {}
-    comment_text = comment.get("text")
-    if comment_text is None:
-        comment_text = ""
-    split_text = comment_text.split("|")
-
-    return_dict["company"] = split_text[0]
-    return_dict["id"] = comment["id"]
-    return_dict["parent_id"] = comment["parent_id"]
-    # We always know that the company name is the first element
-    return_dict["company"] = split_text[0]
-    return_dict["location"] = ""
-
-    # Look at the next element to see if it's a location or
-    #                                  position using spacy
-    nlp = spacy.load("en_core_web_sm")
-
-    doc = nlp(comment_text)
-
-    for entity in doc.ents:
-        if entity.label_ == "GPE":
-            # The Model gets confused between locations and programming
-            # Languages and Frameworks.
-            # We can assume that a location will be a city or country
-            # However, we will still end up with some Languages/Framworks
-            return_dict["location"] += entity.text + ","
-    return_dict["location"] = return_dict["location"].rstrip(",")
-    return_dict["company"] = return_dict["company"].rstrip("<p>")
-
-    return return_dict
+import utils
 
 
 def get_article_by_id(id: int):
@@ -92,6 +59,28 @@ def filter_title(articles: list):
     return valid_articles
 
 
+def init_db():
+    print("Creating database")
+    db = db_conn.db_conn("output.db")
+    # Create a table for the articles
+    print("Creating tables")
+    db.create_table("articles", db_conn.article_dict)
+    db.create_table("comments", db_conn.comment_dict)
+
+
+def save_articles(db: db_conn.db_conn, articles):
+    for art_idx, article in enumerate(articles):
+        db.insert("articles", article)
+        article_id = article.get("objectID")
+        article_data = get_article_by_id(article_id)
+        com_list = article_data.get("children")
+        for com_idx, comment in enumerate(com_list):
+            print_bottom_status(art_idx, len(articles), com_idx, len(com_list))
+            comment_data = utils.get_comment_dict(comment)
+            if comment_data is not None:
+                db.insert("comments", comment_data)
+
+
 def project_2_main():
     print("Getting articles")
     # Get the 12 articles from the past year
@@ -100,29 +89,21 @@ def project_2_main():
     print("Filtering articles")
     past_hire = filter_title(past_year)
     # Create a database connection
-    
-    print("Creating database")
-    db = db_conn.db_conn("output.db")
-    # Create a table for the articles
-    print("Creating tables")
-    db.create_table("articles", db_conn.article_dict)
-    db.create_table("comments", db_conn.comment_dict)
-    
-    for art_idx, article in enumerate(past_hire):
-        db.insert("articles", article)
-        article_id = article.get("objectID")
-        article_data = get_article_by_id(article_id)
-        comment_list = article_data.get("children")
-        for com_idx, comment in enumerate(comment_list):
-            print_bottom_status(art_idx, len(past_hire), com_idx, len(comment_list))
-            comment_data = get_comment_dict(comment)
-            db.insert("comments", comment_data)
+
+    db = init_db()
+
+    save_articles(db, past_hire)
 
     db.close()
 
-def print_bottom_status(article_count, article_total, comment_count, comment_total):
-    print(f"Articles: {article_count + 1}/{article_total} " +  
-          f"Comments: {comment_count + 1}/{comment_total}", end="\r")
+
+def print_bottom_status(art_count, art_total, com_count, com_total):
+    print(
+        f"Articles: {art_count + 1}/{art_total} "
+        + f"Comments: {com_count + 1}/{com_total}        ",
+        end="\r",
+    )
+
 
 def project_1_main():
     past_year = get_pages_past_year()

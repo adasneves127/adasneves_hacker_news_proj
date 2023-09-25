@@ -9,7 +9,7 @@ article_dict = {
     "author": "text",
     "points": "Integer",
     "num_comments": "Integer",
-    "created_at_i": "Integer"
+    "created_at_i": "Integer",
 }
 
 comment_dict = {
@@ -17,9 +17,10 @@ comment_dict = {
     "parent_id": "integer",
     "company": "text",
     "location": "text",
-    "salary": "text",
+    "salary_low": "text",
+    "salary_high": "text",
     "raw_comment": "blob",
-    "foreign key(parent_id)": "references articles(objectID)"
+    "foreign key(parent_id)": "references articles(objectID)",
 }
 
 
