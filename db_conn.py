@@ -39,6 +39,13 @@ class db_conn:
         except Exception as e:
             print(f"SQL Syntax Error! {e}\n{query}")
 
+    def query_raw(self, query: str) -> list:
+        try:
+            self.cursor.execute(query)
+            return self.cursor.fetchall()
+        except Exception as e:
+            print(f"SQL Syntax Error! {e}\n{query}")
+    
     def execute_with_params(self, query: str, params: list) -> None:
         try:
             self.cursor.execute(query, params)

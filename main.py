@@ -104,7 +104,7 @@ def print_bottom_status(art_count, art_total, com_count, com_total):
         end="\r",
     )
 
-
+# This is the code for project 1
 def project_1_main():
     past_year = get_pages_past_year()
     past_hire = filter_title(past_year)
