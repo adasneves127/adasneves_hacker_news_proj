@@ -1,6 +1,7 @@
 import pytest
 from main import get_pages_past_year, filter_title, get_article_by_id
-from db_conn import db_conn, article_dict, comment_dict
+from db_conn import db_conn, article_dict
+
 
 def test_article_comment_length():
     # Get an article
@@ -19,11 +20,11 @@ def test_database_functionality():
     # Create a table for the articles
     db.create_table("articles", article_dict)
     # check that the table exists
-    results = db.query_raw("SELECT name FROM sqlite_master WHERE type='table';")
+    results = db.exec_raw("SELECT name FROM sqlite_master WHERE type='table';")
     assert results[0][0] == "articles"  # Check that the table exists
-        
+
     db.insert("articles", {"objectID": 1, "title": "test"})
-    results = db.query_raw("SELECT * FROM articles;")
+    results = db.exec_raw("SELECT * FROM articles;")
     assert results[0][0] == 1  # Check that the object ID matches
 
 
