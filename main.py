@@ -59,7 +59,7 @@ def get_pages_past_year():
 def filter_title(articles: list):
     valid_articles = []
     for article in articles:
-        if str(article["title"]).startswith("Ask HN: Who is hiring? ("):
+        if str(article.get("title", "")).startswith("Ask HN: Who is hiring? ("):
             valid_articles.append(article)
     return valid_articles
 
@@ -82,7 +82,8 @@ def save_articles(db: db_conn.db_conn, articles, thread_id: int):
         article_data = get_article_by_id(article_id)
         com_list = article_data.get("children")
         for com_idx, comment in enumerate(com_list):
-            export_status(art_idx, len(articles), com_idx, len(com_list), thread_id)
+            export_status(art_idx, len(articles), com_idx, len(com_list),
+                          thread_id)
             comment_data = utils.get_comment_dict(comment)
             if comment_data is not None:
                 db.insert("comments", comment_data)
@@ -105,9 +106,9 @@ def project_2_main(thread_id: int):
     threads[thread_id][1] = "Done"
 
 
-def export_status(art_count, art_total, com_count, com_total, thread_id: int):
-    threads[thread_id][1] = \
-            f"Article {art_count + 1}/{art_total} Comment {com_count + 1}/{com_total}"
+def export_status(art_cnt, art_ttl, com_cnt, com_ttl, TID: int):
+    threads[TID][1] = \
+        f"Article {art_cnt + 1}/{art_ttl} Comment {com_cnt + 1}/{com_ttl}"
 
 
 # This is the code for project 1
@@ -132,13 +133,14 @@ def get_from_db(table: str):
     db.close()
     return results
 
+
 if __name__ == "__main__":
     threads.append([threading.Thread(target=project_2_main, args=[0]), ""])
     threads[-1][0].start()
     try:
         while True:
             print(threads[0][1])
-            if(threads[0][1] == "Done"):
+            if threads[0][1] == "Done":
                 threads[0][0].join()
                 break
     except KeyboardInterrupt:

@@ -45,21 +45,20 @@ class db_conn:
             return self.cursor.fetchall()
         except Exception as e:
             print(f"SQL Syntax Error! {e}\n{query}")
-            
+
     def query(self, table, *params):
         query = f"SELECT * FROM {table} WHERE "
-        
+
         for param in params:
             col = param[0]
             op = param[1]
             val = param[2]
             query += f"{col} {op} {val} AND"
-        
+
         query = query[:-3]
-        
+
         self.cursor.execute(query)
         return self.cursor.fetchall()
-        
 
     def execute_with_params(self, query: str, params: list) -> None:
         try:
