@@ -45,7 +45,7 @@ def get_comment_dict(comment: dict):
     split_text = comment_text.split("|")
 
     return_dict["company"] = split_text[0]
-    if(len(return_dict["company"]) > 20):
+    if len(return_dict["company"]) > 20:
         return_dict["company"] = return_dict["company"].split(" ")[0]
     return_dict["id"] = comment["id"]
     return_dict["parent_id"] = comment["parent_id"]
