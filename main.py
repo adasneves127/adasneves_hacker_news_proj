@@ -3,6 +3,11 @@ from urllib import parse
 from datetime import datetime
 import db_conn
 import utils
+from typing import List
+import threading
+
+
+threads: List[List[threading.Thread | str]] = []
 
 
 def get_article_by_id(id: int):
@@ -59,52 +64,50 @@ def filter_title(articles: list):
     return valid_articles
 
 
-def init_db():
-    print("Creating database")
+def init_db(thread_id: int):
+    threads[thread_id][1] = "Creating database"
     db = db_conn.db_conn("output.db")
     # Create a table for the articles
-    print("Creating tables")
+    threads[thread_id][1] = "Creating tables"
     db.create_table("articles", db_conn.article_dict)
     db.create_table("comments", db_conn.comment_dict)
 
     return db
 
 
-def save_articles(db: db_conn.db_conn, articles):
+def save_articles(db: db_conn.db_conn, articles, thread_id: int):
     for art_idx, article in enumerate(articles):
         db.insert("articles", article)
         article_id = article.get("objectID")
         article_data = get_article_by_id(article_id)
         com_list = article_data.get("children")
         for com_idx, comment in enumerate(com_list):
-            print_bottom_status(art_idx, len(articles), com_idx, len(com_list))
+            export_status(art_idx, len(articles), com_idx, len(com_list), thread_id)
             comment_data = utils.get_comment_dict(comment)
             if comment_data is not None:
                 db.insert("comments", comment_data)
 
 
-def project_2_main():
-    print("Getting articles")
+def project_2_main(thread_id: int):
+    threads[thread_id][1] = "Getting articles"
     # Get the 12 articles from the past year
     past_year = get_pages_past_year()
     # Filter out the articles that don't start with "Ask HN: Who is hiring? ("
-    print("Filtering articles")
+    threads[thread_id][1] = "Filtering articles"
     past_hire = filter_title(past_year)
     # Create a database connection
 
-    db = init_db()
+    db = init_db(thread_id)
 
-    save_articles(db, past_hire)
+    save_articles(db, past_hire, thread_id)
 
     db.close()
+    threads[thread_id][1] = "Done"
 
 
-def print_bottom_status(art_count, art_total, com_count, com_total):
-    print(
-        f"Articles: {art_count + 1}/{art_total} "
-        + f"Comments: {com_count + 1}/{com_total}        ",
-        end="\r",
-    )
+def export_status(art_count, art_total, com_count, com_total, thread_id: int):
+    threads[thread_id][1] = \
+            f"Article {art_count + 1}/{art_total} Comment {com_count + 1}/{com_total}"
 
 
 # This is the code for project 1
@@ -123,5 +126,21 @@ def project_1_main():
         )
 
 
+def get_from_db(table: str):
+    db = db_conn.db_conn("output.db")
+    results = db.query(table)
+    db.close()
+    return results
+
 if __name__ == "__main__":
-    project_2_main()
+    threads.append([threading.Thread(target=project_2_main, args=[0]), ""])
+    threads[-1][0].start()
+    try:
+        while True:
+            print(threads[0][1])
+            if(threads[0][1] == "Done"):
+                threads[0][0].join()
+                break
+    except KeyboardInterrupt:
+        for thread in threads:
+            thread[0].join()

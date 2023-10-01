@@ -2,6 +2,8 @@
 
 import spacy
 import re
+from bs4 import BeautifulSoup
+
 
 nlp = spacy.load("en_core_web_sm")
 
@@ -10,8 +12,8 @@ def get_comment_location(comment_text: str):
     # Look at the next element to see if it's a location or
     #                                  position using spacy
 
-    # Only look at the first 300 characters.
-    doc = nlp(comment_text[:300])
+    # Only look at the first 100 characters.
+    doc = nlp(comment_text[:100])
     location = ""
 
     # Iterate through the items found by Spacy and see if they are location
@@ -37,12 +39,14 @@ def get_comment_salary(comment_text: str, return_dict: dict):
 
 def get_comment_dict(comment: dict):
     return_dict = {}
-    comment_text = comment.get("text")
+    comment_text = BeautifulSoup(comment.get("text")).text
     if comment_text is None:
         return None
     split_text = comment_text.split("|")
 
     return_dict["company"] = split_text[0]
+    if(len(return_dict["company"]) > 20):
+        return_dict["company"] = return_dict["company"].split(" ")[0]
     return_dict["id"] = comment["id"]
     return_dict["parent_id"] = comment["parent_id"]
     return_dict["location"] = get_comment_location(comment_text)

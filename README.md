@@ -8,7 +8,13 @@
 
 ### Installing
 
-To install this project, create and source a new venv using the commands `python3.10 -m venv venv` followed by:
+To install this project, create and source a new venv using the following commands
+
+```BASH
+python3.10 -m venv venv
+```
+
+followed by:
 
 #### BASH/ZSH
 
