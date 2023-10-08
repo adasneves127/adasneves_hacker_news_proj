@@ -3,6 +3,7 @@
 import spacy
 import re
 from bs4 import BeautifulSoup
+import string
 
 
 nlp = spacy.load("en_core_web_sm")
@@ -19,29 +20,34 @@ def get_comment_location(comment_text: str):
     # Iterate through the items found by Spacy and see if they are location
     for entity in doc.ents:
         if entity.label_ == "GPE":
-            location += entity.text + ","
+            location += entity.text + "\n"
 
     if "remote" in comment_text.lower():
-        location += "Remote,"
+        location += "Remote\n"
 
-    if "part time" in comment_text.lower():
-        location += "Part-Time,"
+    if any(["parttime" in comment_text.lower().replace(x, "")
+            for x in string.punctuation + string.whitespace]):
+        location += "Part Time\n"
 
     return location.lstrip("<p>").rstrip(",")
 
 
 def get_comment_salary(comment_text: str, return_dict: dict):
-    salary = re.search(r"\$([0-9]+k)-?\$([0-9]+k)?", comment_text)
-    if salary is not None:
-        return_dict["salary_low"] = salary.group(1)
-        return_dict["salary_high"] = salary.group(2)
+    for char in string.whitespace:
+        comment_text = comment_text.replace(char, "")
+    pay = re.search(r"\$?([0-9\.]+k?)-\$?([0-9]+k)?", comment_text)
+    if pay is not None:
+        return_dict["salary_low"] = int(pay.group(1).replace('k', '')) * 1E3
+
+        return_dict["salary_high"] = int(pay.group(2).replace('k', '')) * 1E3
 
 
 def get_comment_dict(comment: dict):
     return_dict = {}
-    comment_text = BeautifulSoup(comment.get("text")).text
-    if comment_text is None:
+    raw = comment.get("text")
+    if raw is None:  # or "[dead]" in raw or "[flagged] in raw"
         return None
+    comment_text = BeautifulSoup(raw, features="html.parser").text
     split_text = comment_text.split("|")
 
     return_dict["company"] = split_text[0]

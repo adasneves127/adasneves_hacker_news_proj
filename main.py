@@ -41,7 +41,7 @@ def get_all_pages():
 
 def get_pages_past_year():
     all_articles = get_all_pages()
-    date_now = datetime.now()
+    date_now = datetime.fromtimestamp(1693540800)
 
     articles_within_year = []
     for article in all_articles:
