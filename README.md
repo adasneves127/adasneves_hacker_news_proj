@@ -41,14 +41,8 @@ To install required packages, use python's PIP command as follows:
 
 ### Usage
 
-To run the program, use `python3.10 main.py`. The program will begin execution, gathering all the "Who is Hiring" pages from the past 12 months, and putting them in a "output.db" file.
+To execute the code in this project, execute `flask run` in your terminal. Then, open the [web interface](http://localhost:5000)
 
----
+To get data from the Agnolia API, press the `Get Data` button. This will begin to get the articles posted on the forum since September 1st, 2022. This will take roughly 5-15 minutes, depending on CPU speed, and network speed.
 
-### Viewing Data
-
-To view the output, you can use the [DB Browser for SQLite](https://sqlitebrowser.org/) or [Jetbrains DataGrip](https://www.jetbrains.com/datagrip/).
-
-The results are stored in 2 tables. The first, 'Articles' contains the title, ID, and total number of comments per each article.
-
-The second database, 'Comments' shows all the parsed comment data, with the Comment ID, the Parent (Article) ID, Location, Company Name, and Salary (If Provided), as well as the raw text of the comment.
+To view the data, press the `View Data` button. This will load a table on your screen to search through.

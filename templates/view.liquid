@@ -7,6 +7,14 @@
   </head>
   <body>
     <table>
+      <tr>
+        <th>Comment ID</th>
+        <th>Post ID</th>
+        <th>Company Name</th>
+        <th>Location</th>
+        <th colspan="2">Salary</th>
+        <th>Comment Text</th>
+      </tr>
       {% for row in data %}
         <tr>
           {% for cell in row %}
@@ -16,4 +24,12 @@
       {% endfor %}
     </table>
   </body>
+  <style>
+    table,
+    th,
+    td {
+      border-collapse: collapse;
+      border: 1px solid;
+    }
+  </style>
 </html>
