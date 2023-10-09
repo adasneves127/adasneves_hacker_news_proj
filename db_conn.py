@@ -20,6 +20,7 @@ comment_dict = {
     "salary_low": "text",
     "salary_high": "text",
     "raw_comment": "blob",
+    "created_at": "text",
     "foreign key(parent_id)": "references articles(objectID)",
 }
 

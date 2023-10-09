@@ -88,5 +88,5 @@ def get_comment_dict(comment: dict):
     get_comment_salary(comment_text, return_dict)
     # Keep track of the whole text of the comment.
     return_dict["raw_comment"] = comment_text
-
+    return_dict['created_at'] = comment.get('created_at_i')
     return return_dict

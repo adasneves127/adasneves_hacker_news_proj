@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Data</title>
+    <script>
+      function filterData() {
+
+// Do refresh with URL parameters.
+        const lSalary = document.getElementById("lSalary").value;
+        const hSalary = document.getElementById("hSalary").value;
+        const isRemote = document.getElementById("isRemote").checked;
+        const str_date = String(+ new Date(document.getElementById("posted_on").value));
+        const post_after = str_date.slice(0, 10);
+
+        let url = `http://localhost:5000/view?lSalary=${lSalary}&hSalary=${hSalary}&isRemote=${isRemote}&post_by=${post_after}`;
+        window.location.href = url;
+      }
+
+      function load_boxes() {
+
+// Load the filters from the URL parameters.
+        const urlParams = new URLSearchParams(window.location.search);
+        const lSalary = urlParams.get('lSalary');
+        const hSalary = urlParams.get('hSalary');
+        const isRemote = (urlParams.get('isRemote') === 'true');
+
+        document.getElementById("lSalary").value = lSalary;
+        document.getElementById("hSalary").value = hSalary;
+        document.getElementById("isRemote").checked = isRemote;
+
+        let date = new Date(parseInt(urlParams.get('post_by')) * 1000);
+        document.getElementById("posted_on").value = date.toISOString().split('T')[0]
+      }
+    </script>
+    <style>
+      table,
+      th,
+      td {
+        border-collapse: collapse;
+        border: 1px solid;
+      }
+    </style>
+  </head>
+  <body onload="load_boxes()">
+    <fieldset>
+      <legend>Filters</legend>
+      <label for="lSalary">Low Salary &gt;</label>
+      <input
+        type="number"
+        name="lSalary"
+        id="lSalary"> <br>
+      <label for="hSalary">High Salary &lt;</label>
+      <input
+        type="number"
+        name="hSalary"
+        id="hSalary">
+      <br>
+      <label for="isRemote">Show Remote</label>
+      <input
+        type="checkbox"
+        name="isRemote"
+        id="isRemote">
+      <br/>
+      <!-- Posted on or after -->
+      <label for="posted_on">Posted on or after</label>
+      <input
+        type="date"
+        name="posted_on"
+        id="posted_on">
+      <br>
+      <button onclick="filterData()">Filter</button>
+    </fieldset>
+
+    <table>
+      <tr>
+        <th>Company Name</th>
+        <th>Location</th>
+        <th>Date Posted</th>
+        <th>View</th>
+      </tr>
+      {% for row in data %}
+        <tr>
+          <td>{{ row[0] }}</td>
+          <td>{{ row[1] }}</td>
+          <td>{{ row[2] }}</td>
+          <td>
+            <a href="/expand/{{row[3]}}">View</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+  </body>
+
+</html>
