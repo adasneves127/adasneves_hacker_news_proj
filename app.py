@@ -3,6 +3,7 @@ from flask_liquid import Liquid
 from flask_liquid import render_template
 import threading
 import main
+from datetime import datetime
 
 
 app = Flask(__name__)
@@ -54,40 +55,45 @@ def get_data():
     """
 
 
+@app.route("/expand/<CID>")
+def view_one(CID=None):
+    query = f"SELECT * FROM comments where ID = {CID}"
+    results = main.get_from_db(query)[0]
+    return render_template("expand.liquid", id=CID, data=results)
+
+
 @app.route("/view")
-def view_data():
-    lSalary = request.args.get('lSalary', '')
-    hSalary = request.args.get('hSalary', '100000000')
-    isRemote = request.args.get('isRemote')
-    sort_by = request.args.get('sort_by')
-    # Generate our SQL arguments:
-    arg_list = []
-    if lSalary != '':
-        arg_list.append(f'salary_low > {lSalary}')
-    if hSalary != '':
-        arg_list.append(f'salary_high < {hSalary}')
-    if isRemote == 'true':
-        arg_list.append('location NOT LIKE \'%remote%\'')
-    args = ' AND '.join(arg_list)
+def view_all():
+    salary_low = request.args.get("lSalary")
+    salary_high = request.args.get("hSalary")
+    show_remote = request.args.get("isRemote") == "true"
+    post_after = request.args.get("post_by")
+    query = "SELECT company, location, created_at, id FROM comments"
+    args = []
+    if salary_low != "":
+        args.append(f" salary_low > {salary_low} ")
+    if salary_high != "":
+        args.append(f" salary_high < {salary_high} ")
+    if not show_remote:
+        args.append(" location not like '%remote%' ")
+    if post_after != "":
+        args.append(f" created_at > {post_after} ")
 
-    if sort_by != '':
-        match sort_by:
-            case 'none':
-                pass
-            case 'post_name':
-                args += ' ORDER BY a.title'
-            case 'company_name':
-                args += ' ORDER BY b.company'
-            case 'location':
-                args += ' ORDER BY b.location'
-            case 'lsalary':
-                args += ' ORDER BY salary_low DESC'
-            case 'hsalary':
-                args += ' ORDER BY salary_high DESC'
+    query += ' where ' + 'and'.join(args)
+    print(query)
+    results = main.get_from_db(query)
+    updated_results = [[row[0],
+                        row[1],
+                        get_year_fmt(int(row[2])),
+                        row[3]]
+                       for row in results]
+    return render_template("view_all.liquid", data=updated_results)
 
-    print(args)
-    articles = main.get_from_db(args)
-    return render_template("view.liquid", data=articles)
+
+def get_year_fmt(timestamp: int):
+    dt_obj = datetime.fromtimestamp(timestamp)
+    date = f"{dt_obj.month}/{dt_obj.day}/{dt_obj.year}"
+    return date
 
 
 if __name__ == "__main__":
