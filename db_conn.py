@@ -26,7 +26,7 @@ comment_dict = {
 
 class db_conn:
     def __init__(self, db_name: str):
-        self.tables = {}
+        self.tables: dict = {}
         self.db = sqlite3.connect(db_name)
         self.cursor = self.db.cursor()
 

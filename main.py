@@ -127,9 +127,21 @@ def project_1_main():
         )
 
 
-def get_from_db(table: str):
+def get_from_db(args: str):
     db = db_conn.db_conn("output.db")
-    results = db.query(table)
+
+    query = '''select a.title,
+        b.company, b.location, b.salary_low, b.salary_high,
+        b.raw_comment from articles a, comments b
+        where a.objectID = b.parent_id '''
+    if args.startswith('ORDER'):
+        query += args
+    elif args != '':
+        query += f'AND {args}'
+
+    print(query)
+
+    results = db.exec_raw(query)
     db.close()
     return results
 

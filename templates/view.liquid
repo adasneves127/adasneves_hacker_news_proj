@@ -4,12 +4,77 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Data</title>
+    <script>
+      function filterData() {
+
+// Do refresh with URL parameters.
+        const lSalary = document.getElementById("lSalary").value;
+        const hSalary = document.getElementById("hSalary").value;
+        const isRemote = document.getElementById("isRemote").checked;
+        const sort_by = document.getElementById("sort").value;
+
+        let url = `http://localhost:5000/view?lSalary=${lSalary}&hSalary=${hSalary}&isRemote=${isRemote}&sort_by=${sort_by}`;
+        window.location.href = url;
+      }
+
+      function load_boxes() {
+
+// Load the filters from the URL parameters.
+        const urlParams = new URLSearchParams(window.location.search);
+        const lSalary = urlParams.get('lSalary');
+        const hSalary = urlParams.get('hSalary');
+        const isRemote = (urlParams.get('isRemote') === 'true');
+
+        document.getElementById("lSalary").value = lSalary;
+        document.getElementById("hSalary").value = hSalary;
+        document.getElementById("isRemote").checked = isRemote;
+      }
+    </script>
+    <style>
+      table,
+      th,
+      td {
+        border-collapse: collapse;
+        border: 1px solid;
+      }
+    </style>
   </head>
-  <body>
+  <body onload="load_boxes()">
+    <fieldset>
+      <legend>Filters</legend>
+      <label for="lSalary">Low Salary &gt;</label>
+      <input
+        type="number"
+        name="lSalary"
+        id="lSalary"> <br>
+      <label for="hSalary">High Salary &lt;</label>
+      <input
+        type="number"
+        name="hSalary"
+        id="hSalary">
+      <br>
+      <label for="isRemote">Show Remote</label>
+      <input
+        type="checkbox"
+        name="isRemote"
+        id="isRemote">
+      <br/>
+      <label for="sort">Sort By</label>
+      <select name="sort" id="sort">
+        <option value="none">None</option>
+        <option value="post_name">Post Name</option>
+        <option value="company_name">Company Name</option>
+        <option value="location">Location</option>
+        <option value="lsalary">Low Salary</option>
+        <option value="hsalary">High Salary</option>
+      </select>
+      <br>
+      <button onclick="filterData()">Filter</button>
+    </fieldset>
+
     <table>
       <tr>
-        <th>Comment ID</th>
-        <th>Post ID</th>
+        <th>Post Name</th>
         <th>Company Name</th>
         <th>Location</th>
         <th colspan="2">Salary</th>
@@ -24,12 +89,5 @@
       {% endfor %}
     </table>
   </body>
-  <style>
-    table,
-    th,
-    td {
-      border-collapse: collapse;
-      border: 1px solid;
-    }
-  </style>
+
 </html>
