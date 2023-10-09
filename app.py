@@ -1,4 +1,4 @@
-from flask import Flask  # , Request
+from flask import Flask, request
 from flask_liquid import Liquid
 from flask_liquid import render_template
 import threading
@@ -19,7 +19,6 @@ def hello_world():
 
 @app.route("/getData/<TID>")
 def get_thread_info(TID=None):
-    print(TID, main.threads[int(TID)][1])
     if main.threads[int(TID)][1] == "Done":
         main.threads[int(TID)][0].join()
     return render_template("thread.liquid",
@@ -57,8 +56,37 @@ def get_data():
 
 @app.route("/view")
 def view_data():
-    articles = main.get_from_db("comments")
-    print(articles)
+    lSalary = request.args.get('lSalary', '')
+    hSalary = request.args.get('hSalary', '100000000')
+    isRemote = request.args.get('isRemote')
+    sort_by = request.args.get('sort_by')
+    # Generate our SQL arguments:
+    arg_list = []
+    if lSalary != '':
+        arg_list.append(f'salary_low > {lSalary}')
+    if hSalary != '':
+        arg_list.append(f'salary_high < {hSalary}')
+    if isRemote == 'true':
+        arg_list.append('location NOT LIKE \'%remote%\'')
+    args = ' AND '.join(arg_list)
+
+    if sort_by != '':
+        match sort_by:
+            case 'none':
+                pass
+            case 'post_name':
+                args += ' ORDER BY a.title'
+            case 'company_name':
+                args += ' ORDER BY b.company'
+            case 'location':
+                args += ' ORDER BY b.location'
+            case 'lsalary':
+                args += ' ORDER BY salary_low DESC'
+            case 'hsalary':
+                args += ' ORDER BY salary_high DESC'
+
+    print(args)
+    articles = main.get_from_db(args)
     return render_template("view.liquid", data=articles)
 
 
