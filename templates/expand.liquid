@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Comment{{ id }}</title>
+    <title>View Comment {{ id }}</title>
     <style>
       table,
       th,
@@ -17,11 +17,11 @@
     <table style="width: 100%; height: 100%;">
       <tr>
         <td style="text-align: center; vertical-align: middle;">
-          <h1>View Comment {{ id }}</h1>
-          <h2>Company Name: {{ data[2] }}</h2>
-          <p>Salary Range: ${{ data[4] }}-${{ data[5] }}</p>
-          <p>Location: {{ data[3] }}</p>
-          <p>Comment: <br> {{ data[6] }}</p>
+          <h1 id="CID">View Comment {{ id }}</h1>
+          <h2 id="CompanyName">Company Name: {{ data[2] }}</h2>
+          <p id="Salary">Salary Range: ${{ data[4] }}-${{ data[5] }}</p>
+          <p id="Location">Location: {{ data[3] }}</p>
+          <p id="Comment">Comment: <br> {{ data[6] }}</p>
           <button onclick="history.back()">Back</button>
         </td>
       </tr>

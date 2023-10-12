@@ -11,28 +11,33 @@
         const lSalary = document.getElementById("lSalary").value;
         const hSalary = document.getElementById("hSalary").value;
         const isRemote = document.getElementById("isRemote").checked;
-        const str_date = String(+ new Date(document.getElementById("posted_on").value));
+        const raw_unix_date = + new Date(document.getElementById("posted_on").value)
+        const str_date = String(!isNaN(raw_unix_date) ? raw_unix_date : 0 );
         const post_after = str_date.slice(0, 10);
 
-        let url = `http://localhost:5000/view?lSalary=${lSalary}&hSalary=${hSalary}&isRemote=${isRemote}&post_by=${post_after}`;
-        window.location.href = url;
-      }
+        let url = `http://localhost:5000/view?lSalary=${lSalary}&hSalary=${hSalary}&isRemote=${isRemote}`;
+        if (!isNaN(post_after)) {
+          url += `&post_by=${post_after}`;
+        }
+      
+      window.location.href = url;
+    }
 
-      function load_boxes() {
+    function load_boxes() {
 
 // Load the filters from the URL parameters.
-        const urlParams = new URLSearchParams(window.location.search);
-        const lSalary = urlParams.get('lSalary');
-        const hSalary = urlParams.get('hSalary');
-        const isRemote = (urlParams.get('isRemote') === 'true');
+      const urlParams = new URLSearchParams(window.location.search);
+      const lSalary = urlParams.get('lSalary');
+      const hSalary = urlParams.get('hSalary');
+      const isRemote = (urlParams.get('isRemote') === 'true');
 
-        document.getElementById("lSalary").value = lSalary;
-        document.getElementById("hSalary").value = hSalary;
-        document.getElementById("isRemote").checked = isRemote;
+      document.getElementById("lSalary").value = lSalary;
+      document.getElementById("hSalary").value = hSalary;
+      document.getElementById("isRemote").checked = isRemote;
 
-        let date = new Date(parseInt(urlParams.get('post_by')) * 1000);
-        document.getElementById("posted_on").value = date.toISOString().split('T')[0]
-      }
+      let date = new Date(parseInt(urlParams.get('post_by')) * 1000);
+      document.getElementById("posted_on").value = date.toISOString().split('T')[0]
+    }
     </script>
     <style>
       table,
