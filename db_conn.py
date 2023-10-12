@@ -46,6 +46,7 @@ class db_conn:
             return self.cursor.fetchall()
         except Exception as e:
             print(f"SQL Syntax Error! {e}\n{query}")
+            return []
 
     def query(self, table, *params):
         query = f"SELECT * FROM {table} WHERE "
