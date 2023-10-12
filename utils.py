@@ -38,7 +38,7 @@ def get_comment_salary(comment_text: str, return_dict: dict):
     for char in string.whitespace:
         comment_text = comment_text.replace(char, "")
     # Regex that matches a salary range
-    regex = r"\$?([0-9]+\.?[0-9]*k?)-(?:\$?([0-9]+\.?[0-9]*k))?"
+    regex = r"\$?([0-9\,]+\.?[0-9]*k?)-(?:\$?([0-9\,]+\.?[0-9]*k?))?"
     # Execute the regex on the comment text.
     # flags=10 means Case Insensitive +multiline.
     pay = re.search(regex, comment_text, flags=10)
@@ -88,5 +88,5 @@ def get_comment_dict(comment: dict):
     get_comment_salary(comment_text, return_dict)
     # Keep track of the whole text of the comment.
     return_dict["raw_comment"] = comment_text
-    return_dict['created_at'] = comment.get('created_at_i')
+    return_dict['created_at'] = str(comment.get('created_at_i', ''))
     return return_dict
