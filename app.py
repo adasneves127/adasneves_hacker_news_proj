@@ -30,8 +30,10 @@ def get_thread_info(TID=None):
 @app.route("/getData")
 def get_data():
     import os
-
-    os.system("rm output.db")
+    try:
+        os.system("rm output.db")
+    except FileNotFoundError:
+        pass
     TID = len(main.threads)
     main.threads.append(
         [threading.Thread(target=main.project_2_main,
@@ -58,16 +60,16 @@ def get_data():
 @app.route("/expand/<CID>")
 def view_one(CID=None):
     query = f"SELECT * FROM comments where ID = {CID}"
-    results = main.get_from_db(query)[0]
+    results = main.get_from_db("output.db", query)[0]
     return render_template("expand.liquid", id=CID, data=results)
 
 
 @app.route("/view")
 def view_all():
-    salary_low = request.args.get("lSalary")
-    salary_high = request.args.get("hSalary")
+    salary_low = request.args.get("lSalary", '')
+    salary_high = request.args.get("hSalary", '')
     show_remote = request.args.get("isRemote") == "true"
-    post_after = request.args.get("post_by")
+    post_after = request.args.get("post_by", '')
     query = "SELECT company, location, created_at, id FROM comments"
     args = []
     if salary_low != "":
@@ -81,7 +83,8 @@ def view_all():
 
     query += ' where ' + 'and'.join(args)
     print(query)
-    results = main.get_from_db(query)
+    results = main.get_from_db("output.db", query)
+
     updated_results = [[row[0],
                         row[1],
                         get_year_fmt(int(row[2])),
