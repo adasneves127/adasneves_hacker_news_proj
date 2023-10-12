@@ -37,6 +37,11 @@ followed by:
 To install required packages, use python's PIP command as follows:
 `pip3.10 install -r requirements.txt`
 
+### Installing Selenium requirements
+To use Selenium, please install [geckodriver](https://github.com/mozilla/geckodriver/releases) and Firefox. If you are on Linux, please make sure that your Firefox is installed via Apt, and not Snap.
+
+Please follow [these](https://www.omgubuntu.co.uk/2022/04/how-to-install-firefox-deb-apt-ubuntu-22-04) instructions to install Firefox via Apt.
+
 ---
 
 ### Usage
