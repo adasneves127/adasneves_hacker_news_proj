@@ -20,11 +20,11 @@ def hello_world():
 
 @app.route("/getData/<TID>")
 def get_thread_info(TID=None):
-    if main.threads[int(TID)][1] == "Done":
-        main.threads[int(TID)][0].join()
+    if main.thread_strs[int(TID)] == "Done":
+        main.threads[int(TID)].join()
     return render_template("thread.liquid",
                            TID=TID,
-                           TSTAT=main.threads[int(TID)][1])
+                           TSTAT=main.thread_strs[int(TID)])
 
 
 @app.route("/getData")
@@ -36,10 +36,11 @@ def get_data():
         pass
     TID = len(main.threads)
     main.threads.append(
-        [threading.Thread(target=main.project_2_main,
-                          args=[TID]), ""]
+        threading.Thread(target=main.project_2_main,
+                         args=[TID])
         )
-    main.threads[-1][0].start()
+    main.thread_strs.append("")
+    main.threads[-1].start()
     return f"""
     <!DOCTYPE html>
     <html>

@@ -7,7 +7,8 @@ from typing import List
 import threading
 
 
-threads: List[List[threading.Thread | str]] = []
+threads: List[threading.Thread] = []
+thread_strs: List[str] = []
 
 
 def get_article_by_id(id: int):
@@ -59,7 +60,9 @@ def get_pages_past_year():
 def filter_title(articles: list):
     valid_articles = []
     for article in articles:
-        if str(article["title"]).startswith("Ask HN: Who is hiring? ("):
+        if str(article.get("title", '')).startswith(
+            "Ask HN: Who is hiring? ("
+        ):
             valid_articles.append(article)
     return valid_articles
 
@@ -127,8 +130,8 @@ def project_1_main():
         )
 
 
-def get_from_db(query: str):
-    db = db_conn.db_conn("output.db")
+def get_from_db(db_name: str, query: str):
+    db = db_conn.db_conn(db_name)
 
     results = db.exec_raw(query)
     db.close()
