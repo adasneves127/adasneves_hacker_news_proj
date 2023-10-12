@@ -100,5 +100,42 @@ def test_gui_placement():
     driver.close()  # Close the firefox instance
 
 
+def test_salary_range(tmp_path):
+    f1 = tmp_path / "test.db"
+    db = db_conn(f1)
+    db.create_table("articles", article_dict)
+    db.create_table("comments", comment_dict)
+    db.insert("articles", {
+        "objectID": 1,
+        "created_at": datetime.fromtimestamp(0),
+        "title": "Ask HN: Test"
+    })
+    db.insert("comments", {
+        "id": 2,
+        "parent_id": 1,
+        "company": "Dasneves Data",
+        "location": "Somewhereville, MA",
+        "salary_low": "75000",
+        "salary_high": "100000",
+        "created_at": 1659326400
+    })
+    db.insert("comments", {
+        "id": 3,
+        "parent_id": 1,
+        "company": "Santore Software",
+        "location": "Nowhereville, MA",
+        "salary_low": "200000",
+        "salary_high": "400000",
+        "created_at": 1690862400
+    })
+    # Get data from database
+    query = "SELECT * FROM comments " + \
+            "WHERE salary_low > 150000 " + \
+            "and salary_high < 400000"
+    results = db.exec_raw(query)
+    assert len(results) == 1
+    assert results[0][0] == 2
+
+
 if __name__ == "__main__":
     pytest.main()

@@ -68,10 +68,10 @@ def filter_title(articles: list):
 
 
 def init_db(thread_id: int):
-    threads[thread_id][1] = "Creating database"
+    thread_strs[thread_id] = "Creating database"
     db = db_conn.db_conn("output.db")
     # Create a table for the articles
-    threads[thread_id][1] = "Creating tables"
+    thread_strs[thread_id] = "Creating tables"
     db.create_table("articles", db_conn.article_dict)
     db.create_table("comments", db_conn.comment_dict)
 
@@ -93,11 +93,11 @@ def save_articles(db: db_conn.db_conn, articles, thread_id: int):
 
 
 def project_2_main(thread_id: int):
-    threads[thread_id][1] = "Getting articles"
+    thread_strs[thread_id] = "Getting articles"
     # Get the 12 articles from the past year
     past_year = get_pages_past_year()
     # Filter out the articles that don't start with "Ask HN: Who is hiring? ("
-    threads[thread_id][1] = "Filtering articles"
+    thread_strs[thread_id] = "Filtering articles"
     past_hire = filter_title(past_year)
     # Create a database connection
 
@@ -106,11 +106,11 @@ def project_2_main(thread_id: int):
     save_articles(db, past_hire, thread_id)
 
     db.close()
-    threads[thread_id][1] = "Done"
+    thread_strs[thread_id] = "Done"
 
 
 def export_status(art_cnt, art_ttl, com_cnt, com_ttl, TID: int):
-    threads[TID][1] = \
+    thread_strs[TID] = \
         f"Article {art_cnt + 1}/{art_ttl} Comment {com_cnt + 1}/{com_ttl}"
 
 
@@ -140,13 +140,13 @@ def get_from_db(db_name: str, query: str):
 
 if __name__ == "__main__":
     threads.append([threading.Thread(target=project_2_main, args=[0]), ""])
-    threads[-1][0].start()
+    threads[0].start()
     try:
         while True:
-            print(threads[0][1])
-            if threads[0][1] == "Done":
-                threads[0][0].join()
+            print(thread_strs[0])
+            if thread_strs[0] == "Done":
+                threads[0].join()
                 break
     except KeyboardInterrupt:
         for thread in threads:
-            thread[0].join()
+            thread.join()
