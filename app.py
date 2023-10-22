@@ -71,6 +71,8 @@ def view_all():
     salary_high = request.args.get("hSalary", '')
     show_remote = request.args.get("isRemote") == "true"
     post_after = request.args.get("post_by", '')
+    keywords = request.args.get("keywords", '')
+    post_before = request.args.get("post_before", '')
     query = "SELECT company, location, created_at, id FROM comments"
     args = []
     if salary_low != "":
@@ -81,6 +83,11 @@ def view_all():
         args.append(" location not like '%remote%' ")
     if post_after != "":
         args.append(f" created_at > {post_after} ")
+    if post_before != "":
+        args.append(f" created_at < {post_before} ")
+    if keywords != "":
+        for keyword in keywords.split(","):
+            args.append(f" raw_comment like '%{keyword}%' ")
 
     query += ' where ' + 'and'.join(args)
     print(query)
