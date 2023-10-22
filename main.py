@@ -139,7 +139,8 @@ def get_from_db(db_name: str, query: str):
 
 
 if __name__ == "__main__":
-    threads.append([threading.Thread(target=project_2_main, args=[0]), ""])
+    threads.append(threading.Thread(target=project_2_main, args=[0]))
+    thread_strs.append("")
     threads[0].start()
     try:
         while True:
