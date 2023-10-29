@@ -137,5 +137,32 @@ def test_salary_range(tmp_path):
     assert results[0][0] == 2
 
 
+def test_filters():
+    # web_thread = Thread(target=app.run, daemon=True)
+    # web_thread.start()  # Start the server
+    options = FirefoxOptions()
+    options.add_argument('--headless')  # No window!
+    driver = webdriver.Firefox(options=options)
+    driver.get("localhost:5000/view")
+    table_unfiltered = driver.find_element(By.ID, "data_table")
+    # Get the rows in the table
+    rows_unfiltered = len(table_unfiltered.find_elements(By.TAG_NAME, "tr"))
+
+    # Apply a Filter
+    driver.get("localhost:5000/view?keywords=python")
+    table_filtered = driver.find_element(By.ID, "data_table")
+    rows_filtered = len(table_filtered.find_elements(By.TAG_NAME, "tr"))
+    assert rows_filtered <= rows_unfiltered
+
+    # Apply a second filter
+    driver.get("localhost:5000/view?keywords=python,java")
+    table_double_filtered = driver.find_element(By.ID, "data_table")
+    rows_double_filtered = len(
+        table_double_filtered.find_elements(
+            By.TAG_NAME, "tr")
+        )
+    assert rows_double_filtered <= rows_filtered
+
+
 if __name__ == "__main__":
     pytest.main()
