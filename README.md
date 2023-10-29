@@ -61,6 +61,8 @@ Before Testing, please run the program through the steps above to properly fill 
 
 Once the database has been populated, run the automated tests with `pytest`
 
-### Additional Test
+**NOTE**: These tests can take anywhere from 1 to 5 minutes for them to run. Please do not terminate the tests if you are within these time limits.
+
+#### Additional Test
 
 For my final test, I wrote a test to ensure that my GUI was displaying all the results in the table.
