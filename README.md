@@ -60,3 +60,7 @@ To view the data, press the `View Data` button. This will load a table on your s
 Before Testing, please run the program through the steps above to properly fill out the database, as the test of GUI Components requires the `output.db` file to have all the data in it.
 
 Once the database has been populated, run the automated tests with `pytest`
+
+### Additional Test
+
+For my final test, I wrote a test to ensure that my GUI was displaying all the results in the table.

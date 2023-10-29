@@ -72,10 +72,28 @@ def test_age_filter(tmp_path):
     assert res[0][0] == 3
 
 
-def test_gui_placement():
+def test_article_GUI():
+    db = db_conn('output.db')
+    comment_count = db.exec_raw("SELECT COUNT(*) FROM comments;")[0][0]
+    db.close()
     # Create a thread for our web app. Daemon says don't wait for process end
     web_thread = Thread(target=app.run, daemon=True)
     web_thread.start()  # Start the server
+    # Create a Firefox Selenium Instance
+    options = FirefoxOptions()
+    options.add_argument('--headless')  # No window!
+    driver = webdriver.Firefox(options=options)
+    driver.get("localhost:5000/view")
+    table = driver.find_element(By.ID, "data_table")
+    rows = table.find_elements(By.TAG_NAME, "tr")
+    # The rows number we get includes the headers.
+    # We need to subtract 1 row from our GUI Results
+    rows.pop(0)  # Remove the header row
+    # Make sure we have the correct number of rows
+    assert len(rows) == comment_count
+
+
+def test_gui_placement():
     db = db_conn('output.db')  # Get an article from the database
     CID = 33068430
     query = f"SELECT * FROM comments WHERE ID={CID}"

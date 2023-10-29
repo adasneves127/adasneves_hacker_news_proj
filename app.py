@@ -69,7 +69,7 @@ def view_one(CID=None):
 def view_all():
     salary_low = request.args.get("lSalary", '')
     salary_high = request.args.get("hSalary", '')
-    show_remote = request.args.get("isRemote") == "true"
+    show_remote = request.args.get("isRemote") != "true"
     post_after = request.args.get("post_by", '')
     keywords = request.args.get("keywords", '')
     post_before = request.args.get("post_before", '')
@@ -88,8 +88,8 @@ def view_all():
     if keywords != "":
         for keyword in keywords.split(","):
             args.append(f" raw_comment like '%{keyword}%' ")
-
-    query += ' where ' + 'and'.join(args)
+    if len(args) != 0:
+        query += ' where ' + 'and'.join(args)
     print(query)
     results = main.get_from_db("output.db", query)
 
