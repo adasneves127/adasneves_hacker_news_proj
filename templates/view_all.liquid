@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Data</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js" integrity="sha512-bcfltY+lNLlNxz38yBBm/HLaUB1gTV6I0e+fahbF9pS6roIdzUytozWdnFV8ZnM6cSAG5EbmO0ag0a/fLZSG4Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
     <script>
       function filterData() {
 
@@ -46,16 +48,76 @@
       document.getElementById("isRemote").checked = isRemote;
       document.getElementById("keywords").value = keywords;
 
-
-      let date_after = new Date(parseInt(urlParams.get('post_by')) * 1000);
-      document.getElementById("posted_on").value = date_after.toISOString().split('T')[0]
-
-      let date_before = new Date(parseInt(urlParams.get('post_before')) * 1000);
-      if(parseInt(urlParams.get('post_before')) == 0){
+      let intDateAfter = parseInt(urlParams.get('post_by')) 
+      if(intDateAfter == 0 || isNaN(intDateAfter)){
         document.getElementById("posted_before").value = new Date().toISOString().split('T')[0]
       } else {
+        let date_after = new Date(intDateAfter * 1000);
+        document.getElementById("posted_on").value = date_after.toISOString().split('T')[0]
+      }
+
+      let intDateBefore = parseInt(urlParams.get('post_before')) 
+      if(intDateBefore == 0 || isNaN(intDateBefore)){
+        document.getElementById("posted_before").value = new Date().toISOString().split('T')[0]
+      } else {
+        let date_before = new Date(intDateBefore * 1000);
         document.getElementById("posted_before").value = date_before.toISOString().split('T')[0]
       }
+    }
+    function setup(){
+      let screen_width = window.screen.width
+      let canvas = createCanvas(screen_width / 2 - 40, 400)
+      canvas.parent("graph")
+    }
+
+
+    function draw(){
+      background(214, 48, 112);
+      let margin_x = 40;
+      let margin_y = 40;
+
+      line(margin_x, 0, margin_x, height - margin_y)
+      line(margin_x, height - margin_y, width, height-margin_y)
+      table_data = {}
+      // Iterate through the table, and get the date posted.
+      table = document.getElementById("data_table")
+      for (let i = 1; i < table.rows.length; i++) {
+        let row = table.rows[i]
+        let date_posted = row.cells[2].innerText
+        let date_posted_unix = new Date(date_posted)
+        // We only care about month and year
+        let month_year = date_posted_unix.getMonth() + 1 + "-" + date_posted_unix.getFullYear()
+        if (month_year in table_data) {
+          table_data[month_year] += 1
+        } else {
+          table_data[month_year] = 1
+        }
+      }
+
+      // Create a bar graph of the data using p5.js
+      let max_value = Math.max(...Object.values(table_data))
+      table_len = Object.keys(table_data).length
+      for(let i = 0; i < table_len; i++){
+        let key = Object.keys(table_data)[i]
+        let value = table_data[key]
+        let col_width = (width - margin_x) / table_len
+        let x = margin_x + (i * col_width )
+        let y = height - margin_y - (value * (height - margin_y) / max_value)
+        fill(0x26, 0x91, 0xF1)
+        rect(x, y, col_width , value * (height - margin_y) / max_value)
+        fill(0)
+        text(key, x + col_width / 8, height - margin_y + 20)
+      }
+      fill(0)
+      let step = Math.floor(max_value / Math.log(max_value))
+
+      // Draw a scale for the y-axis
+      for(let i = 0; i <= max_value; i+=step){
+        let x = margin_x - 20
+        let y = height - margin_y - (i * (height - margin_y) / max_value)
+        text(i, x, y)
+      }
+
     }
     </script>
     <style>
@@ -75,9 +137,13 @@
         height: 20dvh;
         margin-bottom: 10px;
       }
+      #graph{
+        margin-top: -19dvh;
+        margin-left: 50%;
+      }
     </style>
   </head>
-  <body onload="load_boxes()">
+  <body onload="load_boxes();">
     <button onclick="window.location.href='/'">Back</button>
     <div id="fieldBoxes">
       <fieldset id="dataFilters">
@@ -122,10 +188,10 @@
 
         <button onclick="filterData()">Filter</button>
       </fieldset>
-      
+      <div id="graph"></div>
     </div>
 
-    <table>
+    <table id="data_table">
       <tr>
         <th>Company Name</th>
         <th>Location</th>
